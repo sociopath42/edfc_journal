@@ -22,13 +22,16 @@ private:
     QJsonObject m_nextEvent;
     QJsonDocument m_jdoc;
 public:
-    QDateTime nextEventTime() { return m_eventTime; }
-    QJsonObject nextEventObject() { return m_nextEvent; }
-
+    QDateTime nextEventTime() { if (m_journalFile.isOpen()) return m_eventTime;
+                                else                        return QDateTime(); }
+    QJsonObject nextEventObject() { if (m_journalFile.isOpen()) return m_nextEvent;
+                                    else                        return QJsonObject(); }
+    bool isRunning() { return !!m_journalFile.bytesAvailable(); }
 public slots:
     void setJournal(QString journalFile);
     void nextEvent(); // will process event at 'nextEventTime'
     void forwardToDate(const QDateTime &dateTime); // move to time right before 'dateTime'
+    void forwardToEvent(const QString &event); // move to time right before 'dateTime'
     void restart();
 
 signals:

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>425</width>
-    <height>248</height>
+    <width>563</width>
+    <height>356</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -139,7 +139,7 @@
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
-        <height>40</height>
+        <height>121</height>
        </size>
       </property>
      </spacer>
@@ -170,6 +170,13 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pauseSession_pb">
+        <property name="text">
+         <string>pause</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0">
        <widget class="QPushButton" name="restartJournals_pb">
         <property name="text">
@@ -178,17 +185,26 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QPushButton" name="pauseSession_pb">
+       <widget class="QPushButton" name="stepNextEvent_pb">
         <property name="text">
-         <string>pause</string>
+         <string>step 1 event</string>
         </property>
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QPushButton" name="stepNextEvent_pb">
+       <widget class="QPushButton" name="stepToNext_pb">
         <property name="text">
-         <string>step</string>
+         <string>step to next:</string>
         </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QComboBox" name="eventName_cbx">
+        <item>
+         <property name="text">
+          <string>ShipTargeted</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
@@ -200,7 +216,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>425</width>
+     <width>563</width>
      <height>19</height>
     </rect>
    </property>

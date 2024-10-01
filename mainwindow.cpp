@@ -17,15 +17,65 @@ MainWindow::MainWindow(QWidget *parent)
                      this, &MainWindow::on_stepNextEvent_pb_clicked);
 }
 
-MainWindow::~MainWindow()
+QJsonObject MainWindow::on_stepNextEvent_pb_clicked()
 {
-    delete ui;
+    JournalSequencer *nextPlayerEventSource = nullptr;
+    if (m_player_1.isRunning() &&
+        (m_player_1.nextEventTime() != QDateTime()))
+        nextPlayerEventSource = &m_player_1;
+    if (m_player_2.isRunning() &&
+        (m_player_2.nextEventTime() > nextPlayerEventSource->nextEventTime()))
+        nextPlayerEventSource = &m_player_2;
+    if (m_player_3.isRunning() &&
+     (m_player_3.nextEventTime() > nextPlayerEventSource->nextEventTime()))
+        nextPlayerEventSource = &m_player_3;
+    if (m_player_4.isRunning() &&
+     (m_player_4.nextEventTime() > nextPlayerEventSource->nextEventTime()))
+        nextPlayerEventSource = &m_player_4;
+
+    if (nextPlayerEventSource)
+    {
+        nextPlayerEventSource->nextEvent();
+        return nextPlayerEventSource->nextEventObject();
+    }
+    return QJsonObject();
 }
 
-void MainWindow::closeEvent(QCloseEvent  *)
+QJsonObject MainWindow::on_stepToNext_pb_clicked()
 {
-    QApplication::exit(0);
-};
+    QJsonObject nextEventObj = on_stepNextEvent_pb_clicked();
+    while (nextEventObj.value("event").toString() != ui->eventName_cbx->currentText())
+    {
+        if (nextEventObj.isEmpty())
+            return nextEventObj;
+        nextEventObj = on_stepNextEvent_pb_clicked();
+    }
+    return nextEventObj;
+}
+
+
+void MainWindow::on_syncJournals_pb_clicked()
+{
+ // todo later
+}
+
+void MainWindow::on_playSession_pb_clicked()
+{
+    m_playTimer.start();
+}
+
+void MainWindow::on_pauseSession_pb_clicked()
+{
+    m_playTimer.stop();
+}
+
+void MainWindow::on_restartJournals_pb_clicked()
+{
+    m_player_1.restart();
+    m_player_2.restart();
+    m_player_3.restart();
+    m_player_4.restart();
+}
 
 void MainWindow::on_loadJournal1_pb_clicked()
 {
@@ -59,49 +109,17 @@ void MainWindow::on_loadJournal2_pb_clicked()
     m_player_4.setJournal(filePath);
 }
 
-void MainWindow::on_stepNextEvent_pb_clicked()
-{
-    JournalSequencer *nextPlayerEventSource = &m_player_1;
-    if (m_player_2.nextEventTime() > nextPlayerEventSource->nextEventTime())
-        nextPlayerEventSource = &m_player_2;
-    if (m_player_3.nextEventTime() > nextPlayerEventSource->nextEventTime())
-        nextPlayerEventSource = &m_player_3;
-    if (m_player_4.nextEventTime() > nextPlayerEventSource->nextEventTime())
-        nextPlayerEventSource = &m_player_4;
-
-    nextPlayerEventSource->nextEvent();
-}
-
-
-void MainWindow::on_playSession_pb_clicked()
-{
-    m_playTimer.start();
-}
-
-
-void MainWindow::on_pauseSession_pb_clicked()
-{
-    m_playTimer.stop();
-}
-
-
-void MainWindow::on_restartJournals_pb_clicked()
-{
-    m_player_1.restart();
-    m_player_2.restart();
-    m_player_3.restart();
-    m_player_4.restart();
-}
-
-
-void MainWindow::on_syncJournals_pb_clicked()
-{
- // todo later
-}
-
-
 void MainWindow::on_playInterval_dspin_valueChanged(double arg1)
 {
     m_playTimer.setInterval(arg1 * 1000);
 }
 
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent  *)
+{
+    QApplication::exit(0);
+};

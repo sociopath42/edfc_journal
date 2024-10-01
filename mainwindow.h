@@ -39,15 +39,16 @@ private:
 protected:
     void closeEvent(QCloseEvent  *);
 private slots:
-    void on_loadJournal1_pb_clicked();
-    void on_loadJournal4_pb_clicked();
-    void on_loadJournal3_pb_clicked();
-    void on_loadJournal2_pb_clicked();
-    void on_stepNextEvent_pb_clicked();
+    QJsonObject on_stepNextEvent_pb_clicked();
+    QJsonObject on_stepToNext_pb_clicked();
+    void on_syncJournals_pb_clicked();
     void on_playSession_pb_clicked();
     void on_pauseSession_pb_clicked();
     void on_restartJournals_pb_clicked();
-    void on_syncJournals_pb_clicked();
+    void on_loadJournal1_pb_clicked();
+    void on_loadJournal2_pb_clicked();
+    void on_loadJournal3_pb_clicked();
+    void on_loadJournal4_pb_clicked();
     void on_playInterval_dspin_valueChanged(double arg1);
 
 private:
