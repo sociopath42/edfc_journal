@@ -14,6 +14,7 @@
 #include <QJsonArray>
 #include <QFileDialog>
 #include <QLayout>
+#include <QSettings>
 
 #include "journalsequencer.h"
 
@@ -35,6 +36,10 @@ private:
     JournalSequencer m_player_3;
     JournalSequencer m_player_4;
     QTimer m_playTimer;
+    QSettings m_settings;
+
+private:
+    void loadPlayerJournal(JournalSequencer &pj, QString settingEntry);
 
 protected:
     void closeEvent(QCloseEvent  *);

@@ -21,6 +21,7 @@ private:
     QDateTime m_eventTime;
     QJsonObject m_nextEvent;
     QJsonDocument m_jdoc;
+    QString m_playerName;
 public:
     QDateTime nextEventTime() { if (m_journalFile.isOpen()) return m_eventTime;
                                 else                        return QDateTime(); }
@@ -36,6 +37,8 @@ public slots:
 
 signals:
     void newEvent(const QJsonObject &event, const QDateTime &eventDateTime);
+    void playerNameChanged(const QString &playerName);
+    void logThat(QString logLine);
 };
 
 #endif // JOURNALSEQUENCER_H

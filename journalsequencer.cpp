@@ -19,22 +19,26 @@ void JournalSequencer::setJournal(QString journalFile)
         m_journalFileLive.remove();
     m_journalFileLive.open(QIODeviceBase::WriteOnly);
     m_line = m_journalFile.readLine();
-    m_jdoc.fromJson(m_line);
+    QJsonParseError jerror;
+    m_jdoc = QJsonDocument::fromJson(m_line, &jerror);
 
     m_nextEvent = m_jdoc.object();
     m_eventTime = QDateTime::fromString(m_nextEvent.value("timestamp").toString(), Qt::ISODate);
     emit newEvent(m_nextEvent, m_eventTime);
-
+    forwardToEvent("Commander");
+    m_playerName = m_nextEvent.value("Name").toString();
+    emit playerNameChanged(m_playerName);
 }
 
 void JournalSequencer::nextEvent()
 {
     m_journalFileLive.write(m_line);
     m_line = m_journalFile.readLine();
-    m_jdoc.fromJson(m_line);
+    m_jdoc = QJsonDocument::fromJson(m_line);
     m_nextEvent = m_jdoc.object();
     m_eventTime = QDateTime::fromString(m_nextEvent.value("timestamp").toString(), Qt::ISODate);
     emit newEvent(m_nextEvent, m_eventTime);
+    emit logThat(m_playerName + " next event is " + m_line);
 }
 
 void JournalSequencer::forwardToDate(const QDateTime &dateTime)

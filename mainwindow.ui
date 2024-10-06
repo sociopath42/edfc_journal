@@ -132,17 +132,7 @@
      </layout>
     </item>
     <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>121</height>
-       </size>
-      </property>
-     </spacer>
+     <widget class="QTextEdit" name="log"/>
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout_2">
@@ -163,10 +153,16 @@
       <item row="0" column="2">
        <widget class="QDoubleSpinBox" name="playInterval_dspin">
         <property name="decimals">
-         <number>1</number>
+         <number>2</number>
         </property>
         <property name="minimum">
-         <double>1.000000000000000</double>
+         <double>0.010000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.200000000000000</double>
         </property>
        </widget>
       </item>
@@ -217,7 +213,7 @@
      <x>0</x>
      <y>0</y>
      <width>563</width>
-     <height>19</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuAbout">
