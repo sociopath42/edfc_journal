@@ -63,12 +63,15 @@ QJsonObject MainWindow::on_stepNextEvent_pb_clicked()
     if (m_player_1.isRunning() &&
         (m_player_1.nextEventTime() != QDateTime()))
         nextPlayerEventSource = &m_player_1;
+
     if (m_player_2.isRunning() &&
         (m_player_2.nextEventTime() < nextPlayerEventSource->nextEventTime()))
         nextPlayerEventSource = &m_player_2;
+
     if (m_player_3.isRunning() &&
         (m_player_3.nextEventTime() < nextPlayerEventSource->nextEventTime()))
         nextPlayerEventSource = &m_player_3;
+
     if (m_player_4.isRunning() &&
         (m_player_4.nextEventTime() < nextPlayerEventSource->nextEventTime()))
         nextPlayerEventSource = &m_player_4;

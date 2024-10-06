@@ -19,6 +19,7 @@ void JournalSequencer::setJournal(QString journalFile)
         m_journalFileLive.remove();
     m_journalFileLive.open(QIODeviceBase::WriteOnly);
     m_line = m_journalFile.readLine();
+    m_journalFileLive.write(m_line);
     QJsonParseError jerror;
     m_jdoc = QJsonDocument::fromJson(m_line, &jerror);
 
