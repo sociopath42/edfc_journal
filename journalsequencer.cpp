@@ -34,6 +34,7 @@ void JournalSequencer::setJournal(QString journalFile)
 void JournalSequencer::nextEvent()
 {
     m_journalFileLive.write(m_line);
+    m_journalFileLive.flush();
     m_line = m_journalFile.readLine();
     m_jdoc = QJsonDocument::fromJson(m_line);
     m_nextEvent = m_jdoc.object();

@@ -51,30 +51,29 @@ MainWindow::MainWindow(QWidget *parent)
                      this, [this](const QJsonObject &event, const QDateTime &eventDateTime) {
                          this->ui->currentDate4_lbl->setText(event.value("timestamp").toString());
                      });
-
-
-
-
 }
 
 QJsonObject MainWindow::on_stepNextEvent_pb_clicked()
 {
-    JournalSequencer *nextPlayerEventSource = nullptr;
-    if (m_player_1.isRunning() &&
-        (m_player_1.nextEventTime() != QDateTime()))
-        nextPlayerEventSource = &m_player_1;
+    QList<JournalSequencer*> players;
+    if (m_player_1.isRunning())
+        players.append(&m_player_1);
+    if (m_player_2.isRunning())
+        players.append(&m_player_2);
+    if (m_player_3.isRunning())
+        players.append(&m_player_3);
+    if (m_player_4.isRunning())
+        players.append(&m_player_4);
 
-    if (m_player_2.isRunning() &&
-        (m_player_2.nextEventTime() < nextPlayerEventSource->nextEventTime()))
-        nextPlayerEventSource = &m_player_2;
+    if (players.count() == 0)
+        return QJsonObject();
 
-    if (m_player_3.isRunning() &&
-        (m_player_3.nextEventTime() < nextPlayerEventSource->nextEventTime()))
-        nextPlayerEventSource = &m_player_3;
-
-    if (m_player_4.isRunning() &&
-        (m_player_4.nextEventTime() < nextPlayerEventSource->nextEventTime()))
-        nextPlayerEventSource = &m_player_4;
+    JournalSequencer *nextPlayerEventSource = players.first();
+    std::for_each(players.begin(), players.end(),
+                  [this, &nextPlayerEventSource](JournalSequencer *item) {
+        if (item->nextEventTime() < nextPlayerEventSource->nextEventTime())
+            nextPlayerEventSource = item;
+    });
 
     if (nextPlayerEventSource)
     {
@@ -100,45 +99,45 @@ QJsonObject MainWindow::on_stepToNext_pb_clicked()
 
 void MainWindow::on_syncJournals_pb_clicked()
 {
-    bool everyonesOk = false;
-    bool p1ok = !m_player_1.isRunning();
-    bool p2ok = !m_player_2.isRunning();
-    bool p3ok = !m_player_3.isRunning();
-    bool p4ok = !m_player_4.isRunning();
-    while (!everyonesOk)
-    {
-        JournalSequencer *nextPlayerEventSource = nullptr;
-        if (m_player_1.isRunning() &&
-            (m_player_1.nextEventTime() != QDateTime()))
-        {
-            nextPlayerEventSource = &m_player_1;
-            p1ok = true;
-        }
-        if (m_player_2.isRunning() &&
-            (m_player_2.nextEventTime() > nextPlayerEventSource->nextEventTime()))
-        {
-            nextPlayerEventSource = &m_player_2;
-            p2ok = true;
-        }
-        if (m_player_3.isRunning() &&
-            (m_player_3.nextEventTime() > nextPlayerEventSource->nextEventTime()))
-        {
-            nextPlayerEventSource = &m_player_3;
-            p3ok = true;
-        }
-        if (m_player_4.isRunning() &&
-            (m_player_4.nextEventTime() > nextPlayerEventSource->nextEventTime()))
-        {
-            nextPlayerEventSource = &m_player_4;
-            p4ok = true;
-        }
+    QList<JournalSequencer*> players;
+    if (m_player_1.isRunning())
+        players.append(&m_player_1);
+    if (m_player_2.isRunning())
+        players.append(&m_player_2);
+    if (m_player_3.isRunning())
+        players.append(&m_player_3);
+    if (m_player_4.isRunning())
+        players.append(&m_player_4);
 
-        if (nextPlayerEventSource)
+    if (players.count() == 0)
+        return;
+
+    JournalSequencer *latestEventPlayer = players.first();
+    std::for_each(players.begin(), players.end(),
+                  [this, &latestEventPlayer](JournalSequencer *item) {
+        if (item->nextEventTime() > latestEventPlayer->nextEventTime())
+            latestEventPlayer = item;
+    });
+
+    QDateTime latestEventTime = latestEventPlayer->nextEventTime();
+    QJsonObject nextEventObj = on_stepNextEvent_pb_clicked();
+    QDateTime nextEventtime = QDateTime::fromString(
+        nextEventObj.value("timestamp").toString(),
+        Qt::ISODate);
+
+    while (nextEventtime < latestEventTime)
+    {
+        if (nextEventObj.isEmpty())
         {
-            nextPlayerEventSource->nextEvent();
+            return;
         }
-        everyonesOk = p1ok && p2ok && p3ok && p4ok;
+        nextEventObj = on_stepNextEvent_pb_clicked();
+        nextEventtime = QDateTime::fromString(
+            nextEventObj.value("timestamp").toString(),
+            Qt::ISODate);
     }
+
+
 }
 
 void MainWindow::on_playSession_pb_clicked()
